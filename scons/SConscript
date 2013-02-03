@@ -1,0 +1,24 @@
+Import('env')
+
+_INCLUDES = [Dir('../src').abspath]
+
+_SOURCES = ['Cinder-LeapSdk.cpp']
+_SOURCES = [File('../src/' + s).abspath for s in _SOURCES]
+
+_LIBS = ['Leap']
+if env['PLATFORM'] == 'darwin':
+	_LIBPATH = [Dir('../lib/macosx/').abspath]
+else:
+	_LIBPATH = []
+env.Append(APP_SOURCES = _SOURCES)
+env.Append(CPPPATH = _INCLUDES)
+env.Append(LIBS = _LIBS)
+env.Append(LIBPATH = _LIBPATH)
+
+# copy dylib to app
+if 'APP_TARGET' in env:
+	fout = env['APP_TARGET'] + '.app/Contents/MacOS/libLeap.dylib'
+	fin = Dir('../lib/macosx/').abspath + '/libLeap.dylib'
+	Command('#' + fout, fin, Copy(fout, fin))
+
+Return('env')

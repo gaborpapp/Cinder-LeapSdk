@@ -1,0 +1,10 @@
+env = Environment()
+
+env['APP_TARGET'] = 'UiApp'
+env['APP_SOURCES'] = ['UiApp.cpp']
+env['RESOURCES'] = ['button_off.png', 'button_on.png', 'grab.png',
+	'hand.png', 'slider.png', 'touch.png', 'track.png']
+
+env = SConscript('../../../scons/SConscript', exports = 'env')
+
+SConscript('../../../../../scons/SConscript', exports = 'env')

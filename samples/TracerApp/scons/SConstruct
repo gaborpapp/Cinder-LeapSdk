@@ -1,0 +1,9 @@
+env = Environment()
+
+env['APP_TARGET'] = 'TracerApp'
+env['APP_SOURCES'] = ['TracerApp.cpp', 'Ribbon.cpp']
+env['RESOURCES'] = ['blur_x_frag.glsl', 'blur_y_frag.glsl', 'pass_through_vert.glsl']
+
+env = SConscript('../../../scons/SConscript', exports = 'env')
+
+SConscript('../../../../../scons/SConscript', exports = 'env')

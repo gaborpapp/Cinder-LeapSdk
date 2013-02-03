@@ -239,7 +239,7 @@ struct Vector {
   Vector normalized() const {
     float denom = this->magnitudeSquared();
     if (denom <= 0.0f) {
-      return Vector();
+      return Vector::zero();
     }
     denom = 1.0f / std::sqrt(denom);
     return Vector(x * denom, y * denom, z * denom);
@@ -332,7 +332,7 @@ struct Vector {
   }
 
   /// Returns true if all of the vector's components are finite.  If any
-  /// compnent is NaN or infinite, then this returns false.
+  /// component is NaN or infinite, then this returns false.
   bool isValid() const {
     return (x <= FLT_MAX && x >= -FLT_MAX) &&
            (y <= FLT_MAX && y >= -FLT_MAX) &&
@@ -364,7 +364,7 @@ struct Vector {
   /// Convert a Leap::Vector to another 4-component Vector type.
   ///
   /// The specified type must define a constructor that takes the x, y, z, and w
-  /// components as separate parameters. (The homogenous coordinate, w, is set
+  /// components as separate parameters. (The homogeneous coordinate, w, is set
   /// to zero by default, but you should typically set it to one for vectors
   /// representing a position.)
   template<typename Vector4Type>
@@ -392,6 +392,11 @@ struct FloatArray {
 
   /// Use the Float Array anywhere a float pointer can be used
   operator float* () {
+    return m_array;
+  }
+
+  /// Use the Float Array anywhere a const float pointer can be used
+  operator const float* () const {
     return m_array;
   }
 
@@ -539,10 +544,10 @@ struct Matrix
   /// @returns A new Matrix representing the transformation equivalent to
   /// applying the other transformation followed by this transformation.
   Matrix operator*(const Matrix& other) const {
-      return Matrix(transformDirection(other.xBasis),
-                    transformDirection(other.yBasis),
-                    transformDirection(other.zBasis),
-                    transformPoint(other.origin));
+    return Matrix(transformDirection(other.xBasis),
+                  transformDirection(other.yBasis),
+                  transformDirection(other.zBasis),
+                  transformPoint(other.origin));
   }
 
   /// Multiply transform matrices and assign the product.

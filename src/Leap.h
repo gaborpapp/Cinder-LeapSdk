@@ -797,7 +797,7 @@ class HandList : public Interface {
     LEAP_EXPORT const_iterator end() const;
 };
 
-/// The ScreenList class represents a list of calibrated Screen objects.
+/// The ScreenList class represents a list of Screen objects.
 ///
 /// Get a ScreenList object by calling Controller::calibratedScreens().
 class ScreenList : public Interface {
@@ -836,11 +836,11 @@ class ScreenList : public Interface {
     /// The projected ray emanates from the Pointable tipPosition along the
     /// Pointable's direction vector. If the projected ray does not intersect
     /// any screen surface directly, then the Leap checks for intersection with
-    /// the planes extending from the surfaces of the known, calibrated screens
+    /// the planes extending from the surfaces of the known screens
     /// and returns the Screen with the closest intersection.
     ///
     /// If no intersections are found (i.e. the ray is directed parallel to or
-    /// away from all calibrated screens), then an invalid Screen object is
+    /// away from all known screens), then an invalid Screen object is
     /// returned.
     ///
     /// @param pointable The Pointable object to check for screen intersection.
@@ -855,16 +855,18 @@ class ScreenList : public Interface {
 /// orientation of the monitor screen within the Leap coordinate system. These
 /// characteristics include the bottom-left corner position of the screen,
 /// direction vectors for the horizontal and vertical axes of the screen, and
-/// the screen's normal vector. The screen must be properly calibrated for the
-/// Leap to report these characteristics accurately. The Screen class also
-/// reports the size of the screen in pixels, using information obtained from
-/// the operating system.
+/// the screen's normal vector. The screen must be properly registered with the 
+/// Screen Locator for the Leap to report these characteristics accurately. 
+/// The Screen class also reports the size of the screen in pixels, using 
+/// information obtained from the operating system. (Run the Screen Locator 
+/// from the Leap Application Settings dialog, on the Screen page.)
 ///
 /// You can get the point of intersection between the screen and a ray
 /// projected from a Pointable object using the Screen::intersect() function.
 /// Likewise, you can get the closest point on the screen to a point in space
-/// using the Screen::distanceToPoint() function. Again, the screen must be
-/// calibrated for these functions to return accurate values.
+/// using the Screen::distanceToPoint() function. Again, the screen location 
+/// must be registered with the Screen Locator for these functions to 
+/// return accurate values.
 ///
 /// Note that Screen objects can be invalid, which means that they do not contain
 /// valid screen coordinate data and do not correspond to a physical entity.
@@ -882,9 +884,10 @@ class Screen : public Interface {
     /// Controller::calibratedScreens() method.
     LEAP_EXPORT Screen();
 
-    /// A unique identifier for this screen based on the screen calibration
-    /// information in the configuration. A default screen with ID, *Screen 0*,
-    /// always exists and contains default characteristics, even if uncalibrated.
+    /// A unique identifier for this screen based on the screen 
+    /// information in the configuration. A default screen with ID, *0*,
+    /// always exists and contains default characteristics, even if no screens
+    /// have been located.
     LEAP_EXPORT int32_t id() const;
 
     /// Returns the intersection between this screen and a ray projecting from a
@@ -1426,11 +1429,11 @@ class Config : public Interface {
 /// callback function defined in your subclass of Listener.
 ///
 /// To access frames of tracking data as they become available:
-/// 1. Implement a subclass of the Listener class and override the
+/// #. Implement a subclass of the Listener class and override the
 ///    Listener::onFrame() function.
-/// 2. In your Listener::onFrame() function, call the Controller::frame()
+/// #. In your Listener::onFrame() function, call the Controller::frame()
 ///    function to access the newest frame of tracking data.
-/// 3. To start receiving frames, create a Controller object and add an instance
+/// #. To start receiving frames, create a Controller object and add an instance
 ///    of the Listener subclass to the Controller::addListener() function.
 ///
 /// When an instance of a Listener subclass is added to a Controller object,
@@ -1520,29 +1523,34 @@ class Controller : public Interface {
     /// configuration information. Reserved for future use.
     LEAP_EXPORT Config config() const;
 
-    /// The list of screens calibrated by the user.
+    /// The list of screens whose positions have been identified by using the
+    /// Leap application Screen Locator.
     ///
     /// The list always contains at least one entry representing the default
-    /// screen. If the user has not calibrated this default screen, then the
-    /// coordinates, directions, and other values reported by the functions in
-    /// its Screen object will not be accurate. Other monitor screens only
-    /// appear in the list if they have been calibrated.
+    /// screen. If the user has not registered the location of this default 
+    /// screen, then the coordinates, directions, and other values reported by 
+    /// the functions in its Screen object will not be accurate. Other monitor 
+    /// screens only appear in the list if their positions have been registered
+    /// using the Leap Screen Locator.
     ///
-    /// A calibrated screen provides the position and orientation of a display
+    /// A Screen object represents the position and orientation of a display
     /// monitor screen within the Leap coordinate system.
-    /// For example, if the screen is calibrated, you can get Leap coordinates
-    /// for the bottom-left corner of the screen. Calibration also allows the
-    /// Leap to calculate the point on the screen at which a finger or tool is
-    /// pointing.
+    /// For example, if the screen location is known, you can get Leap coordinates
+    /// for the bottom-left corner of the screen. Registering the screen 
+    /// location also allows the Leap to calculate the point on the screen at 
+    /// which a finger or tool is pointing.
     ///
-    /// A user can calibrate a screen using the Leap application Settings window.
-    /// Avoid assuming that a screen is calibrated or that an existing calibration
-    /// is still accurate. The calibration is only valid as long as the relative
-    /// position of the Leap device and the monitor screen remain constant.
+    /// A user can run the Screen Locator tool from the Leap application 
+    /// Settings window. Avoid assuming that a screen location is known or that 
+    /// an existing position is still correct. The registered position is only 
+    /// valid as long as the relative position of the Leap device and the 
+    /// monitor screen remain constant.
     ///
-    /// @returns ScreenList A list containing the screens calibrated by the user.
+    /// @returns ScreenList A list containing the screens whose positions have 
+    /// been registered by the user using the Screen Locator tool.
     /// The list always contains at least one entry representing the default
-    /// monitor. If that screen isn't calibrated, however, its Screen object
+    /// monitor. If the user has not run the Screen Locator or has moved the Leap
+    /// device or screen since running it, the Screen object for this entry
     /// only contains default values.
     LEAP_EXPORT ScreenList calibratedScreens() const;
 };

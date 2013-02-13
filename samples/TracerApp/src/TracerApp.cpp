@@ -1,6 +1,6 @@
 /*
 * 
-* Copyright (c) 2012, Ban the Rewind
+* Copyright (c) 2013, Ban the Rewind
 * All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or 
@@ -211,8 +211,8 @@ void TracerApp::setup()
 	mCamera		= CameraPersp( getWindowWidth(), getWindowHeight(), 60.0f, 0.01f, 1000.0f );
 	
 	// Start device
-	mLeap = Device::create();
-	mLeap->addCallback( &TracerApp::onFrame, this );
+	mLeap		= Device::create();
+	mCallbackId = mLeap->addCallback( &TracerApp::onFrame, this );
 
 	// Load shaders
 	try {

@@ -422,6 +422,7 @@ Device::~Device()
 		iter->second->disconnect();
 	}
 	mCallbacks.clear();
+	mController->removeListener( mListener );
 }
 
 Leap::Config Device::getConfig() const
